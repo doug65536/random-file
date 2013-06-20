@@ -21,7 +21,7 @@ int _tmain( int argc, _TCHAR* argv[] ) {
   
   int bytesRemaining = bytes;
   while( 0 < bytesRemaining ) {
-    const DWORD bufferLength             = 500;
+    const DWORD bufferLength             = 512;
     BYTE        pbBuffer[ bufferLength ] = {};
 
     if( !::CryptGenRandom( hProvider, bufferLength, pbBuffer ) ) {
