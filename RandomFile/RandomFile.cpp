@@ -1,4 +1,11 @@
 #include "stdafx.h"
+#include <fstream>
+
+#ifdef _UNICODE
+#define tstring std::wstring
+#else
+#define tstring std::string
+#endif
 
 int _tmain( int argc, _TCHAR* argv[] ) {
   if( argc < 2 ) {
@@ -6,8 +13,8 @@ int _tmain( int argc, _TCHAR* argv[] ) {
     return 1;
   }
 
-  std::wstring filename = argv[ 1 ];
-  int          bytes    = _ttoi( argv[ 2 ] );
+  tstring filename = argv[ 1 ];
+  int     bytes    = _ttoi( argv[ 2 ] );
 
   HCRYPTPROV hProvider = 0;
 
@@ -17,8 +24,12 @@ int _tmain( int argc, _TCHAR* argv[] ) {
   }
 
   std::ofstream outputFile;
-  outputFile.open( filename, std::ofstream::binary );
+  outputFile.open( filename, std::ios::binary );
   
+  if (outputFile.bad()) {
+    std::wcout << L"Unable to open output file." << std::endl;
+    return 1;
+  }
   int bytesRemaining = bytes;
   while( 0 < bytesRemaining ) {
     const DWORD bufferLength             = 512;

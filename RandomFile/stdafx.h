@@ -2,7 +2,7 @@
 
 #include "targetver.h"
 
-#include <stdio.h>
+#include <cstdio>
 #include <tchar.h>
 
 #include <fstream>
