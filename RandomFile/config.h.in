@@ -1,5 +1,10 @@
+#ifndef CONFIG_H
+#define CONFIG_H
+
 // Platform configuraton file
 // config.h is generated from this file by cmake
 
 #cmakedefine HAVE_WINDOWS_H
 #cmakedefine HAVE_UNISTD_H
+
+#endif // CONFIG_H
