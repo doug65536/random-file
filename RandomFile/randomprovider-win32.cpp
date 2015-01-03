@@ -9,7 +9,6 @@ IRandomProvider *IRandomProvider::create()
     return new RandomProviderWin32;
 }
 
-
 RandomProviderWin32::RandomProviderWin32(std::size_t size)
     : BufferedRandomProvider(size)
     , hProvider(0)
@@ -18,7 +17,7 @@ RandomProviderWin32::RandomProviderWin32(std::size_t size)
         throw std::invalid_argument("size limited to DWORD range");
     if( !::CryptAcquireContextW( &hProvider, 0, 0,
                                  PROV_RSA_FULL, CRYPT_VERIFYCONTEXT | CRYPT_SILENT ) ) {
-        std::wcout << L"Unable to acquire cryptographic context." << std::endl;
+        std::wcerr << L"Unable to acquire cryptographic context." << std::endl;
         throw std::runtime_error("Failed to initialize generator");
     }
 }

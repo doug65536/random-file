@@ -97,7 +97,8 @@ bool FileWin32::open(std::string const& filename,
         winflag = OPEN_EXISTING;
 
     file = CreateFileW(utf8ToUtf16(filename).c_str(),
-                       GENERIC_READ, FILE_SHARE_READ,
+                       GENERIC_READ | GENERIC_WRITE,
+                       FILE_SHARE_READ,
                        NULL, winflag,
                        FILE_FLAG_SEQUENTIAL_SCAN, NULL);
 
