@@ -8,7 +8,12 @@ typedef std::int64_t file_pointer;
 int realmain( int argc, char const* const* argv )
 {
   if( argc < 2 ) {
-    std::wcerr << L"Missing arguments" << std::endl;
+    std::cerr << "Missing arguments" << std::endl;
+    std::cerr << "Specify a filename" << std::endl <<
+                  "and optionally a number of random"
+                  "bytes to write" << std::endl;
+    std::cerr << "If the size is not specified,"
+                 " the whole file size is used" << std::endl;
     return 1;
   }
 
@@ -23,7 +28,7 @@ int realmain( int argc, char const* const* argv )
 
   std::unique_ptr<IFile> outputFile(IFile::create());
 
-  if (!outputFile->open( filename )) {
+  if (!outputFile->open( filename, IFile::CREATE )) {
     std::wcerr << L"Unable to open output file \"" << filename << "\"." << std::endl;
     return 1;
   }

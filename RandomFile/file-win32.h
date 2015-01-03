@@ -14,7 +14,7 @@ public:
 
     // IFile interface
 private:
-    bool open(std::string const& filename) noexcept;
+    bool open(std::string const& filename, OpenFlags flags) noexcept;
     bool close() noexcept;
     file_pointer size();
     bool read(char *data, std::size_t count) noexcept;

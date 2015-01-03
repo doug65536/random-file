@@ -9,10 +9,20 @@ class IFile
 public:
     typedef std::int64_t file_pointer;
 
+    enum OpenFlags
+    {
+        // If set, the file will be created if it does not exist
+        CREATE = (1<<0),
+
+        // If set, force the file to be empty
+        TRUNCATE = (1<<1)
+    };
+
     static IFile *create();
 
     virtual ~IFile() = 0;
-    virtual bool open(std::string const& filename) noexcept = 0;
+    virtual bool open(std::string const& filename,
+                      OpenFlags flags = OpenFlags(0)) noexcept = 0;
     virtual bool close() noexcept = 0;
 
     virtual bool read(char* data, std::size_t count) noexcept = 0;

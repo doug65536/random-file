@@ -5,6 +5,7 @@
 #include <algorithm>
 
 #include "utfhelpers.h"
+#include "RandomFile.h"
 
 extern "C" int wmain( int argc, wchar_t** argv, wchar_t** envp )
 {
@@ -36,6 +37,7 @@ extern "C" int wmain( int argc, wchar_t** argv, wchar_t** envp )
         });
 
         std::vector<std::size_t> offsets;
+        offsets.reserve(utf8Argv.size());
         utf8CChars.reserve(totalBytes);
         std::for_each(
                     std::begin(utf8Argv),
@@ -60,4 +62,5 @@ extern "C" int wmain( int argc, wchar_t** argv, wchar_t** envp )
         });
     }
 
+    return realmain(convertedArgv.size(), convertedArgv.data());
 }

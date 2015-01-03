@@ -40,14 +40,18 @@ bool FileWin32::write(const char *data, std::size_t count) noexcept
 {
     DWORD wrote = 0;
     return WriteFile(file, data, count, &wrote, NULL) &&
-            wrote == count;
+            (wrote == count);
 }
 
 FileWin32::file_pointer FileWin32::seek(file_pointer p, int rel) noexcept
 {
+    // We avoid aliasing the low and high parts,
+    // by avoiding QuadPart
+
     LARGE_INTEGER ofs;
     ofs.LowPart = LONG(p);
     ofs.HighPart = LONG(p >> 32);
+
     LARGE_INTEGER result;
     result.HighPart = ofs.HighPart;
     result.LowPart = SetFilePointer(
@@ -73,22 +77,39 @@ FileWin32::~FileWin32()
     close();
 }
 
-bool FileWin32::open(std::string const& filename) noexcept
+bool FileWin32::open(std::string const& filename,
+                     OpenFlags flags) noexcept
 {
+    if (file != INVALID_HANDLE_VALUE)
+        if (!close())
+            return false;
+
+    bool truncate = ((flags & TRUNCATE) != 0);
+    bool create = ((flags & CREATE) != 0);
+    DWORD winflag;
+    if (truncate && create)
+        winflag = CREATE_ALWAYS;
+    else if (!truncate && create)
+        winflag = OPEN_ALWAYS;
+    else if (truncate && !create)
+        winflag = TRUNCATE_EXISTING;
+    else if (!truncate && !create)
+        winflag = OPEN_EXISTING;
+
     file = CreateFileW(utf8ToUtf16(filename).c_str(),
                        GENERIC_READ, FILE_SHARE_READ,
-                       NULL, OPEN_ALWAYS,
+                       NULL, winflag,
                        FILE_FLAG_SEQUENTIAL_SCAN, NULL);
+
     return file != INVALID_HANDLE_VALUE;
 }
 
 bool FileWin32::close() noexcept
 {
-    if (file != INVALID_HANDLE_VALUE)
-    {
-        bool result = (CloseHandle(file) != FALSE);
-        file = INVALID_HANDLE_VALUE;
-        return result;
-    }
-    return true;
+    if (file == INVALID_HANDLE_VALUE)
+        return false;
+
+    bool result = (CloseHandle(file) != FALSE);
+    file = INVALID_HANDLE_VALUE;
+    return result;
 }
